@@ -1,6 +1,4 @@
-:warning: I no longer own a Windows PC, so this project has been needless for me. 
-For this reason i will archive this project. :warning:
-
+Fork of https://github.com/BlackReloaded/wsl2-ssh-pageant
 # wsl2-ssh-pageant
 
 ## Motivation
@@ -14,7 +12,7 @@ In order to use `wsl-ssh-pageant` you must have installed `socat` and `ss` on yo
 For example, on Ubuntu you can install these by running: `sudo apt install socat iproute2`
 
 ### Installation
-1. Download latest version from [release page](https://github.com/BlackReloaded/wsl2-ssh-pageant/releases/latest) and copy `wsl2-ssh-pageant.exe` to your windows home directory (or other location within the windows file system). Then simlink to your `$HOME/.ssh` directory for easy access
+1. Download latest version from [release page](https://github.com/jryberg/wsl2-ssh-pageant/releases/latest) and copy `wsl2-ssh-pageant.exe` to your windows home directory (or other location within the windows file system). Then simlink to your `$HOME/.ssh` directory for easy access
     ```bash
     windows_destination="/mnt/c/Users/Public/Downloads/wsl2-ssh-pageant.exe"
     linux_destination="$HOME/.ssh/wsl2-ssh-pageant.exe"
