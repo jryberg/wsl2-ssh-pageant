@@ -7,18 +7,20 @@ I use a Yubikey to store a GPG key pair and I like to use this key pair as my SS
 ## How to use with WSL2
 
 ### Prerequisite
-In order to use `wsl-ssh-pageant` you must have installed `socat` and `ss` on your machine.
+In order to use `wsl-ssh-pageant` you must have installed `socat` and `ss` on your machine and unzip for the installation.
 
-For example, on Ubuntu you can install these by running: `sudo apt install socat iproute2`
+For example, on Ubuntu you can install these by running: `sudo apt install socat iproute2 unzip`
 
 ### Installation
 1. Download latest version from [release page](https://github.com/jryberg/wsl2-ssh-pageant/releases/latest) and copy `wsl2-ssh-pageant.exe` to your windows home directory (or other location within the windows file system). Then simlink to your `$HOME/.ssh` directory for easy access
     ```bash
     windows_destination="/mnt/c/Users/Public/Downloads/wsl2-ssh-pageant.exe"
     linux_destination="$HOME/.ssh/wsl2-ssh-pageant.exe"
-    wget -O "$windows_destination" "https://github.com/BlackReloaded/wsl2-ssh-pageant/releases/latest/download/wsl2-ssh-pageant.exe"
+    wget "https://github.com/jryberg/wsl2-ssh-pageant/releases/latest/download/wsl2-ssh-pageant.exe.zip"
+    unzip wsl2-ssh-pageant.exe.zip
+    sudo mv wsl2-ssh-pageant.exe "$windows_destination"
     # Set the executable bit.
-    chmod +x "$windows_destination"
+    sudo chmod +x "$windows_destination"
     # Symlink to linux for ease of use later
     ln -s $windows_destination $linux_destination
     ```
