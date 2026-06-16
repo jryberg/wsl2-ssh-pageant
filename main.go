@@ -18,8 +18,6 @@ import (
 	"unsafe"
 
 	"github.com/Microsoft/go-winio"
-	"github.com/apenwarr/fixconsole"
-	"github.com/lxn/win"
 	"golang.org/x/sys/windows"
 )
 
@@ -32,7 +30,32 @@ const (
 	// ssh-agent/Pageant constants
 	agentMaxMessageLength = 8192
 	agentCopyDataID       = 0x804e50ba
+
+	// Win32 window message used to pass data to the Pageant window.
+	wmCopyData = 0x004A
 )
+
+// user32.dll procedures used to talk to the Pageant window. Called directly
+// via golang.org/x/sys/windows instead of depending on the unmaintained
+// github.com/lxn/win module.
+var (
+	user32          = windows.NewLazySystemDLL("user32.dll")
+	procFindWindow  = user32.NewProc("FindWindowW")
+	procSendMessage = user32.NewProc("SendMessageW")
+)
+
+func findWindow(className, windowName *uint16) windows.Handle {
+	ret, _, _ := procFindWindow.Call(
+		uintptr(unsafe.Pointer(className)),
+		uintptr(unsafe.Pointer(windowName)),
+	)
+	return windows.Handle(ret)
+}
+
+func sendMessage(hwnd windows.Handle, msg uint32, wParam, lParam uintptr) uintptr {
+	ret, _, _ := procSendMessage.Call(uintptr(hwnd), uintptr(msg), wParam, lParam)
+	return ret
+}
 
 var (
 	verbose           = flag.Bool("verbose", false, "Enable verbose logging")
@@ -59,7 +82,7 @@ func queryPageant(buf []byte) (result []byte, err error) {
 		return
 	}
 
-	hwnd := win.FindWindow(syscall.StringToUTF16Ptr("Pageant"), syscall.StringToUTF16Ptr("Pageant"))
+	hwnd := findWindow(syscall.StringToUTF16Ptr("Pageant"), syscall.StringToUTF16Ptr("Pageant"))
 
 	// Launch gpg-connect-agent
 	if hwnd == 0 {
@@ -67,7 +90,7 @@ func queryPageant(buf []byte) (result []byte, err error) {
 		exec.Command("gpg-connect-agent", "/bye").Run()
 	}
 
-	hwnd = win.FindWindow(syscall.StringToUTF16Ptr("Pageant"), syscall.StringToUTF16Ptr("Pageant"))
+	hwnd = findWindow(syscall.StringToUTF16Ptr("Pageant"), syscall.StringToUTF16Ptr("Pageant"))
 	if hwnd == 0 {
 		err = errors.New("Could not find Pageant window")
 		return
@@ -104,7 +127,7 @@ func queryPageant(buf []byte) (result []byte, err error) {
 		lpData: ((*reflect.StringHeader)(unsafe.Pointer(&mapNameWithNul))).Data,
 	}
 
-	ret := win.SendMessage(hwnd, win.WM_COPYDATA, 0, uintptr(unsafe.Pointer(&cds)))
+	ret := sendMessage(hwnd, wmCopyData, 0, uintptr(unsafe.Pointer(&cds)))
 	if ret == 0 {
 		err = errors.New("WM_COPYDATA failed")
 		return
@@ -125,7 +148,7 @@ func queryPageant(buf []byte) (result []byte, err error) {
 }
 
 func main() {
-	fixconsole.FixConsoleIfNeeded()
+	FixConsoleIfNeeded()
 	flag.Parse()
 
 	if *verbose {

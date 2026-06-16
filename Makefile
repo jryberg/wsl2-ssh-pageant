@@ -1,6 +1,6 @@
 
 build:
-	GOOS=windows go build -o wsl2-ssh-pageant.exe -ldflags -H=windowsgui main.go
+	GOOS=windows go build -o wsl2-ssh-pageant.exe -ldflags -H=windowsgui .
 
 install: build
 	mv wsl2-ssh-pageant.exe ~/.ssh/

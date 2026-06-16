@@ -1,12 +1,4 @@
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
-github.com/apenwarr/fixconsole v0.0.0-20191012055117-5a9f6489cc29 h1:muXWUcay7DDy1/hEQWrYlBy+g0EuwT70sBHg65SeUc4=
-github.com/apenwarr/fixconsole v0.0.0-20191012055117-5a9f6489cc29/go.mod h1:JYWahgHer+Z2xbsgHPtaDYVWzeHDminu+YIBWkxpCAY=
-github.com/apenwarr/w32 v0.0.0-20190407065021-aa00fece76ab h1:CMGzRRCjnD50RjUFSArBLuCxiDvdp7b8YPAcikBEQ+k=
-github.com/apenwarr/w32 v0.0.0-20190407065021-aa00fece76ab/go.mod h1:nfFtvHn2Hgs9G1u0/J6LHQv//EksNC+7G8vXmd1VTJ8=
-github.com/lxn/win v0.0.0-20210218163916-a377121e959e h1:H+t6A/QJMbhCSEH5rAuRxh+CtW96g0Or0Fxa9IKr4uc=
-github.com/lxn/win v0.0.0-20210218163916-a377121e959e/go.mod h1:KxxjdtRkfNoYDCUP5ryK7XJJNTnpC8atvtmTheChOtk=
-golang.org/x/sys v0.0.0-20190405154228-4b34438f7a67/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20201018230417-eeed37f84f13/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.40.0 h1:DBZZqJ2Rkml6QMQsZywtnjnnGvHza6BTfYFWY9kjEWQ=
-golang.org/x/sys v0.40.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
+golang.org/x/sys v0.46.0 h1:noSf2Fq6F8DBgS+LysIkx7rIExoNHJsxOAtPp4rthXw=
+golang.org/x/sys v0.46.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
