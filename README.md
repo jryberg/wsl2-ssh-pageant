@@ -30,17 +30,36 @@ For example, on Ubuntu you can install these by running: `sudo apt install socat
 
 *SSH:*
 ```bash
-export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
-if ! ss -a | grep -q "$SSH_AUTH_SOCK"; then
-  rm -f "$SSH_AUTH_SOCK"
+ssh_agent_ok() {
+  [ -S "$SSH_AUTH_SOCK" ] || return 1
+  SSH_AUTH_SOCK="$SSH_AUTH_SOCK" ssh-add -l >/dev/null 2>&1
+  [ $? -ne 2 ]   # ssh-add -l: 0=keys, 1=no keys but reachable, 2=cannot connect
+}
+
+if ! ssh_agent_ok; then
   wsl2_ssh_pageant_bin="$HOME/.ssh/wsl2-ssh-pageant.exe"
   if test -x "$wsl2_ssh_pageant_bin"; then
-    (setsid nohup socat UNIX-LISTEN:"$SSH_AUTH_SOCK,fork" EXEC:"$wsl2_ssh_pageant_bin" >/dev/null 2>&1 &)
+    # serialize concurrent shell startups so one rm -f can't unlink another's socket
+    exec {lock_fd}>"$HOME/.ssh/.agent.lock"
+    if flock -n "$lock_fd"; then
+      if ! ssh_agent_ok; then                 # re-check inside the lock
+        pkill -f "socat UNIX-LISTEN:$SSH_AUTH_SOCK" 2>/dev/null
+        rm -f "$SSH_AUTH_SOCK"
+        (setsid nohup socat \
+           UNIX-LISTEN:"$SSH_AUTH_SOCK,fork,unlink-early" \
+           EXEC:"$wsl2_ssh_pageant_bin" >/dev/null 2>&1 &)
+        # brief verify: socat backgrounds, so wait for the socket then probe once
+        for _ in 1 2 3 4 5; do [ -S "$SSH_AUTH_SOCK" ] && break; sleep 0.2; done
+        ssh_agent_ok || echo >&2 "WARNING: ssh agent bridge (wsl2-ssh-pageant) failed to start."
+      fi
+    fi
+    exec {lock_fd}>&-
+    unset wsl2_ssh_pageant_bin
   else
     echo >&2 "WARNING: $wsl2_ssh_pageant_bin is not executable."
   fi
-  unset wsl2_ssh_pageant_bin
 fi
+unset -f ssh_agent_ok
 ```
 
 *GPG:*
