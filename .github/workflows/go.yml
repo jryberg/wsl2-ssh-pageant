@@ -5,6 +5,10 @@ on:
       - 'README.md'
       - 'LICENSE'
       - '.github/ISSUE_TEMPLATE/**'
+
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build
